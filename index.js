@@ -71,6 +71,19 @@ async function run() {
       res.json(result);
     })
 
+
+
+
+    app.delete('/idea/:id', async (req, res) => {
+
+      const { id } = req.params;
+
+      const result = await ideasCollection.deleteOne({ _id: new ObjectId(id) });
+
+      res.json(result);
+    })
+
+
     //my ideas routes
 
     app.get('/my-ideas/:id', async (req, res) => {
