@@ -59,12 +59,13 @@ async function run() {
     })
 
 
+//my ideas routes
 
-    app.get('/my-ideas/:email', async (req, res) => {
+    app.get('/my-ideas/:id', async (req, res) => {
 
-      const { email } = req.params;
+      const { id } = req.params;
 
-      const result = await ideasCollection.find({ userEmail: email }).toArray();
+      const result = await ideasCollection.find({ _id: new ObjectId(id) }).toArray();
 
       res.json(result);
 
