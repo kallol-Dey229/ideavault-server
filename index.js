@@ -121,7 +121,48 @@ async function run() {
       res.json(result);
     });
 
-  
+
+
+
+
+
+
+    // total comments by user
+
+    app.get('/my-comments/:id', async (req, res) => {
+
+      const { id } = req.params;
+
+      const result = await commentsCollection.find({ userId: id }).toArray();
+
+      res.json(result);
+
+    });
+
+
+
+    // total interaction
+
+    app.get('/my-interactions/:id', async (req, res) => {
+
+      const { id } = req.params;
+
+      const comments = await commentsCollection.find({ userId: id }).sort({ createdAt: -1 }).toArray();
+
+      const ideas = await ideasCollection.find({ userId: id }).toArray();
+
+      const result = {
+        totalComments: comments.length,
+        totalIdeas: ideas.length,
+        totalInteractions: comments.length + ideas.length,
+        recentComments: comments
+      };
+
+      res.json(result);
+
+    });
+
+
 
 
 
