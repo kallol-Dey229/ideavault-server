@@ -30,6 +30,7 @@ async function run() {
 
     const db = client.db("IdeaVault");
     const ideasCollection = db.collection("ideas");
+    const commentsCollection = db.collection("comments");
 
     //ideas routes
     app.get('/idea', async (req, res) => {
@@ -96,6 +97,31 @@ async function run() {
 
     })
 
+
+
+    //comments routes
+
+    app.get('/comment/:id', async (req, res) => {
+
+      const { id } = req.params;
+
+      const result = await commentsCollection.find({ ideaId: id }).toArray();
+
+      res.json(result);
+
+    });
+
+
+    app.post('/comment', async (req, res) => {
+
+      const commentData = req.body;
+
+      const result = await commentsCollection.insertOne(commentData);
+
+      res.json(result);
+    });
+
+  
 
 
 
