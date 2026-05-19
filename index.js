@@ -4,7 +4,7 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 
-const uri = process.env.MONGO_URI;
+const uri = process.env.MONGODB_URI;
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -59,7 +59,19 @@ async function run() {
     })
 
 
-//my ideas routes
+    app.patch('/idea/:id', async (req, res) => {
+
+      const { id } = req.params;
+      const ideaData = req.body;
+
+      const result = await ideasCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: ideaData });
+
+      res.json(result);
+    })
+
+    //my ideas routes
 
     app.get('/my-ideas/:id', async (req, res) => {
 
