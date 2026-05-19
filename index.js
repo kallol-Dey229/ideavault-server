@@ -60,6 +60,16 @@ async function run() {
 
 
 
+    app.get('/my-ideas/:email', async (req, res) => {
+
+      const { email } = req.params;
+
+      const result = await ideasCollection.find({ userEmail: email }).toArray();
+
+      res.json(result);
+
+    })
+
 
 
 
