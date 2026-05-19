@@ -65,7 +65,7 @@ async function run() {
 
       const { id } = req.params;
 
-      const result = await ideasCollection.find({ _id: new ObjectId(id) }).toArray();
+      const result = await ideasCollection.find({ userId: id }).toArray();
 
       res.json(result);
 
