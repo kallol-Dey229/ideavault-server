@@ -122,6 +122,19 @@ async function run() {
     });
 
 
+    app.patch('/comment/:id', async (req, res) => {
+
+      const { id } = req.params;
+      const commentData = req.body;
+
+      const result = await commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: commentData });
+
+      res.json(result);
+    })
+
+
 
 
 
