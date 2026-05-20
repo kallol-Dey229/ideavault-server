@@ -2,6 +2,7 @@ const express = require('express')
 const dotenv = require('dotenv');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 dotenv.config();
 
 const uri = process.env.MONGODB_URI;
@@ -20,6 +21,39 @@ const client = new MongoClient(uri, {
 });
 
 
+const JWKS = createRemoteJWKSet(
+    new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
+)
+
+
+const verifyToken = async (req, res, next) => {
+    const authHeader = req?.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
+
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+
+    try {
+
+        const { payload } = await jwtVerify(token, JWKS);
+        // console.log("payload",payload)
+        next()
+
+    } catch (error) {
+        return res.status(403).json({ message: "Forbidden" });
+    }
+
+}
+
+
 
 
 async function run() {
@@ -33,7 +67,7 @@ async function run() {
     const commentsCollection = db.collection("comments");
 
     //ideas routes
-    app.get('/idea', async (req, res) => {
+    app.get('/idea',verifyToken, async (req, res) => {
 
       const result = await ideasCollection.find().toArray();
 
@@ -41,7 +75,7 @@ async function run() {
     })
 
 
-    app.post('/idea', async (req, res) => {
+    app.post('/idea', verifyToken, async (req, res) => {
 
       const ideaData = req.body;
 
@@ -50,7 +84,7 @@ async function run() {
       res.json(result);
     })
 
-    app.get('/idea/:id', async (req, res) => {
+    app.get('/idea/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
 
@@ -60,7 +94,7 @@ async function run() {
     })
 
 
-    app.patch('/idea/:id', async (req, res) => {
+    app.patch('/idea/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
       const ideaData = req.body;
@@ -87,7 +121,7 @@ async function run() {
 
     //my ideas routes
 
-    app.get('/my-ideas/:id', async (req, res) => {
+    app.get('/my-ideas/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
 
@@ -101,7 +135,7 @@ async function run() {
 
     //comments routes
 
-    app.get('/comment/:id', async (req, res) => {
+    app.get('/comment/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
 
@@ -112,7 +146,7 @@ async function run() {
     });
 
 
-    app.post('/comment', async (req, res) => {
+    app.post('/comment', verifyToken, async (req, res) => {
 
       const commentData = req.body;
 
@@ -122,7 +156,7 @@ async function run() {
     });
 
 
-    app.patch('/comment/:id', async (req, res) => {
+    app.patch('/comment/:id', verifyToken, async (req, res) => {
 
       const { id } = req.params;
       const commentData = req.body;
@@ -153,7 +187,7 @@ async function run() {
 
     // total comments by user
 
-    app.get('/my-comments/:id', async (req, res) => {
+    app.get('/my-comments/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
 
@@ -167,7 +201,7 @@ async function run() {
 
     // total interaction
 
-    app.get('/my-interactions/:id', async (req, res) => {
+    app.get('/my-interactions/:id',verifyToken, async (req, res) => {
 
       const { id } = req.params;
 
