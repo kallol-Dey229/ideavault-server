@@ -136,6 +136,17 @@ async function run() {
 
 
 
+    app.delete('/comment/:id', async (req, res) => {
+
+      const { id } = req.params;
+
+      const result = await commentsCollection.deleteOne({ _id: new ObjectId(id) });
+
+      res.json(result);
+    })
+
+
+
 
 
 
