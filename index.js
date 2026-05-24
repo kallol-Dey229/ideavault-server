@@ -7,7 +7,7 @@ dotenv.config();
 
 const uri = process.env.MONGODB_URI;
 const app = express();
-app.use(cors());
+app.use(cors({origin: "*"}));
 app.use(express.json());
 const port = process.env.PORT;
 
