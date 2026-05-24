@@ -67,7 +67,7 @@ async function run() {
     const commentsCollection = db.collection("comments");
 
     //ideas routes
-    app.get('/idea',verifyToken, async (req, res) => {
+    app.get('/idea', async (req, res) => {
 
       const result = await ideasCollection.find().toArray();
 
